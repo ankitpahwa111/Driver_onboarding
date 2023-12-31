@@ -28,7 +28,7 @@ of tracking device, etc.,
 
 ## Detailed Approach
 
-![Primary-High-level-design]( ./assets/HLD.png)
+![Primary-High-level-design]( src/assets/HLD.png)
 
 `Leaderboard-Service` consumes events from `Kafka` and stores the data in `MySQL`. It also maintains a cache(`Memcached`)
 to serve the traffic. We have a `cache-aside` arrangement here, which means that we will first check the cache for the data
@@ -46,11 +46,11 @@ and if it is not present in the cache, then we will fetch it from the DB and sto
 
 #### Sign up new user
 
-![Consume-events-from-kafka](./assets/Flow1.jpg)
+![Consume-events-from-kafka](src/assets/Flow1.jpg)
 
 #### Mark user ready
 
-![Retrieve-Top-n-Scorers](./assets/Flow3.jpg)
+![Retrieve-Top-n-Scorers](src/assets/Flow3.jpg)
 
 ## Alternate Approaches
 
@@ -286,7 +286,7 @@ Status Code : 4xx/5xx
 
 ## DB Schema
 
-![db-schema](./assets/DataBase.png)
+![db-schema](src/assets/DataBase.png)
 
 
 
@@ -298,9 +298,9 @@ Status Code : 4xx/5xx
 4. Run `.\bin\windows\kafka-server-start.bat .\config\server.properties` from dir where Kafka is installed
 5. This will start your kafka at `localhost:9092`
 6. If you run into any error - recheck your environment variables for JAVA_HOME and clean the logs file of Kafka and retry.
-7. Run the file [UberOnboardingApplication.java](./main/java/com/intuit/uber/onboarding/UberOnboardingApplication.java).
+7. Run the file [UberOnboardingApplication.java](src/main/java/com/intuit/uber/onboarding/UberOnboardingApplication.java).
 8. This will start the Tomcat server at `localhost:8080`
-9. You can access the H2 SQL server at http://localhost:8080/h2-console. Refer [application.properties](./main/resources/application.properties) for credentials.
+9. You can access the H2 SQL server at http://localhost:8080/h2-console. Refer [application.properties](src/main/resources/application.properties) for credentials.
 
 
 
