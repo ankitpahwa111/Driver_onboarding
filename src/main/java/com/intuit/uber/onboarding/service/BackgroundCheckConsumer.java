@@ -15,7 +15,7 @@ public class BackgroundCheckConsumer {
 
     Gson gson = new Gson();
     @KafkaListener(topics = "NewUserTopic", groupId = "bgc-group")
-    public void listenToCodeDecodeKafkaTopic(String userString) {
+    public void listenToNewUserKafkaTopic(String userString) {
         User user = gson.fromJson(userString, User.class);
         System.out.println("New User signup received by BGC consumer for userId: " + user.getId());
         try {

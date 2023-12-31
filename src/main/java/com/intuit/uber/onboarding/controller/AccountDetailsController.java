@@ -9,6 +9,10 @@
 
 package com.intuit.uber.onboarding.controller;
 
+import com.google.gson.Gson;
+import com.intuit.uber.onboarding.model.entity.DriverStatus;
+import com.intuit.uber.onboarding.service.DriverStatusProducer;
+import com.intuit.uber.onboarding.service.UserSignupProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,11 +33,18 @@ public class AccountDetailsController {
     @Autowired
     private AccountDetailsService accountDetailsService;
 
+    @Autowired
+    private DriverStatusProducer driverStatusProducer;
+
     @PutMapping("/update/{id}")
     public CustomResponseEntity updateOnboardingDetails(@PathVariable Long id,
                                                         @RequestBody AccountDetails details) {
         try {
             AccountDetails dbDetails = accountDetailsService.updateAccountDetails(id, details);
+            DriverStatus driverStatus = new DriverStatus();
+            driverStatus.setUserId(dbDetails.getUser().getId());
+            driverStatus.setIsOnline(dbDetails.getIsOnline());
+            driverStatusProducer.sendMessageToTopic(new Gson().toJson(driverStatus));
             return new CustomResponseEntity(HttpStatus.OK, dbDetails,
                 HttpStatus.OK.getReasonPhrase());
         } catch (CustomException customException) {

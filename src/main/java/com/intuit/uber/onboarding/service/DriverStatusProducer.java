@@ -5,13 +5,12 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserSignupProducer {
+public class DriverStatusProducer {
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
-    public void sendMessageToTopic(String user) {
-        System.out.println("Ankit - sending user - " + user);
-        kafkaTemplate.send("NewUserTopic", user);
+    public void sendMessageToTopic(String message) {
+        System.out.println("Ankit - sending message for driver status - " + message);
+        kafkaTemplate.send("DriverStatusTopic", message);
     }
-
 }
