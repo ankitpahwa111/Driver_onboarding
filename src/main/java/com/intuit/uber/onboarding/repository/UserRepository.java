@@ -16,5 +16,5 @@ import com.intuit.uber.onboarding.model.entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-
+    User findByContact(String contact);
 }

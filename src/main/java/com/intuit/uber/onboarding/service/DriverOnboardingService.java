@@ -20,6 +20,12 @@ public interface DriverOnboardingService {
 
     void initOnboarding(User user);
 
+    void initBGC(User user);
+
+    void initDeviceShipment(User user);
+
+    void initDocumentCollection(User user);
+
     DriverOnboardingDetails updateOnboarding(Long id,
                                              DriverOnboardingDetails details) throws CustomException;
 }

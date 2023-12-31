@@ -11,6 +11,7 @@ package com.intuit.uber.onboarding.controller;
 
 import java.util.Optional;
 
+import com.google.gson.Gson;
 import com.intuit.uber.onboarding.service.UserSignupProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -45,14 +46,16 @@ public class UserController {
     @Autowired
     private UserSignupProducer userSignupProducer;
 
+    Gson gson = new Gson();
+
     @PostMapping("/user")
     public CustomResponseEntity signupUser(@RequestBody User user) {
         System.out.println("Ankit - " + user);
         try {
             User dbUser = userService.userSignupService(user);
             driverOnboardingService.initOnboarding(dbUser);
+            userSignupProducer.sendMessageToTopic(gson.toJson(dbUser));
             accountDetailsService.initAccountDetails(dbUser);
-            userSignupProducer.sendMessageToTopic("New User signed up with userId : "+ dbUser.getId());
             return new CustomResponseEntity(HttpStatus.CREATED, dbUser,
                     HttpStatus.CREATED.getReasonPhrase());
         } catch (CustomException customException) {

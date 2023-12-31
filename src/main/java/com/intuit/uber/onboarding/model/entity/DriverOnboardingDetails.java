@@ -20,6 +20,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.intuit.uber.onboarding.model.enums.ProcessState;
@@ -31,6 +32,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
+@DynamicUpdate
 @Table(name = "driver_onboarding_details")
 @Getter
 @Setter

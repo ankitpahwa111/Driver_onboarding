@@ -9,6 +9,7 @@
 
 package com.intuit.uber.onboarding.service.impl;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -29,7 +30,7 @@ import com.intuit.uber.onboarding.service.UserService;
 public class DriverOnboardingServiceImpl implements DriverOnboardingService {
 
     @Autowired
-    private UserService                userService;
+    private UserService userService;
 
     @Autowired
     private DriverOnboardingRepository driverOnboardingRepository;
@@ -38,10 +39,43 @@ public class DriverOnboardingServiceImpl implements DriverOnboardingService {
     public void initOnboarding(User user) {
         DriverOnboardingDetails details = new DriverOnboardingDetails();
         details.setUser(user);
-        details.setBackgroundCheck(ProcessState.INITIATED);
-        details.setDocumentCollection(ProcessState.INITIATED);
-        details.setTrackingDevice(ProcessState.INITIATED);
+        details.setBackgroundCheck(ProcessState.NOT_STARTED);
+        details.setDocumentCollection(ProcessState.NOT_STARTED);
+        details.setTrackingDevice(ProcessState.NOT_STARTED);
         driverOnboardingRepository.save(details);
+    }
+
+    @Override
+    public void initBGC(User user) {
+        DriverOnboardingDetails driverOnboardingDetails = driverOnboardingRepository.findByUser(user);
+        if (Objects.isNull(driverOnboardingDetails)) {
+            driverOnboardingDetails = new DriverOnboardingDetails();
+            driverOnboardingDetails.setUser(user);
+        }
+        driverOnboardingDetails.setBackgroundCheck(ProcessState.IN_PROGRESS);
+        driverOnboardingRepository.save(driverOnboardingDetails);
+    }
+
+    @Override
+    public void initDeviceShipment(User user) {
+        DriverOnboardingDetails driverOnboardingDetails = driverOnboardingRepository.findByUser(user);
+        if (Objects.isNull(driverOnboardingDetails)) {
+            driverOnboardingDetails = new DriverOnboardingDetails();
+            driverOnboardingDetails.setUser(user);
+        }
+        driverOnboardingDetails.setTrackingDevice(ProcessState.IN_PROGRESS);
+        driverOnboardingRepository.save(driverOnboardingDetails);
+    }
+
+    @Override
+    public void initDocumentCollection(User user) {
+        DriverOnboardingDetails driverOnboardingDetails = driverOnboardingRepository.findByUser(user);
+        if (Objects.isNull(driverOnboardingDetails)) {
+            driverOnboardingDetails = new DriverOnboardingDetails();
+            driverOnboardingDetails.setUser(user);
+        }
+        driverOnboardingDetails.setDocumentCollection(ProcessState.IN_PROGRESS);
+        driverOnboardingRepository.save(driverOnboardingDetails);
     }
 
     @Override
@@ -50,7 +84,7 @@ public class DriverOnboardingServiceImpl implements DriverOnboardingService {
         Optional<User> userOptional = userService.findUser(id);
         if (userOptional.isPresent()) {
             DriverOnboardingDetails dbDetails = driverOnboardingRepository
-                .findByUser(userOptional.get());
+                    .findByUser(userOptional.get());
             dbDetails.setBackgroundCheck(details.getBackgroundCheck());
             dbDetails.setDocumentCollection(details.getDocumentCollection());
             dbDetails.setTrackingDevice(details.getTrackingDevice());

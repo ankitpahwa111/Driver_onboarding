@@ -19,7 +19,8 @@ import lombok.ToString;
 public enum ProcessState {
     INITIATED(1, "initiated"),
     IN_PROGRESS(2, "in_progress"),
-    COMPLETED(3, "completed");
+    COMPLETED(3, "completed"),
+    NOT_STARTED(4, "not_started");
 
     private final int id;
     private final String value;

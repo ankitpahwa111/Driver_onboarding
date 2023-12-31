@@ -9,10 +9,12 @@
 
 package com.intuit.uber.onboarding.service.impl;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import com.intuit.uber.onboarding.exception.DuplicateRecordException;
 import com.intuit.uber.onboarding.exception.InvalidUserException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +34,13 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public User userSignupService(User user) throws InvalidUserException {
+    public User userSignupService(User user) throws InvalidUserException, DuplicateRecordException {
+
+        if (Objects.nonNull(userRepository.findByContact(user.getContact()))) {
+            throw new DuplicateRecordException("User with Contact number - " + user.getContact() + " Already Exists");
+        }
         if (user.getUserType().equals(UserType.DRIVER)
-            && !user.getIdentityType().equals(IdentityType.DRIVING_LICENCE)) {
+                && !user.getIdentityType().equals(IdentityType.DRIVING_LICENCE)) {
             throw new InvalidUserException("Driver needs a driving licence as id proof");
         }
 
