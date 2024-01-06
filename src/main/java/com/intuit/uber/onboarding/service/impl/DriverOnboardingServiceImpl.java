@@ -14,10 +14,11 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import com.intuit.uber.onboarding.exception.OnboardingException;
+import com.intuit.uber.onboarding.exception.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.intuit.uber.onboarding.exception.CustomException;
 import com.intuit.uber.onboarding.model.entity.DriverOnboardingDetails;
 import com.intuit.uber.onboarding.model.entity.User;
 import com.intuit.uber.onboarding.model.enums.ProcessState;
@@ -80,7 +81,7 @@ public class DriverOnboardingServiceImpl implements DriverOnboardingService {
 
     @Override
     public DriverOnboardingDetails updateOnboarding(Long id,
-                                                    DriverOnboardingDetails details) throws CustomException {
+                                                    DriverOnboardingDetails details) throws UserException {
         Optional<User> userOptional = userService.findUser(id);
         if (userOptional.isPresent()) {
             DriverOnboardingDetails dbDetails = driverOnboardingRepository
@@ -90,6 +91,6 @@ public class DriverOnboardingServiceImpl implements DriverOnboardingService {
             dbDetails.setTrackingDevice(details.getTrackingDevice());
             return driverOnboardingRepository.save(dbDetails);
         }
-        throw new CustomException("User details not found");
+        else throw new UserException("User details not found");
     }
 }

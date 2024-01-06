@@ -14,8 +14,7 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
-import com.intuit.uber.onboarding.exception.DuplicateRecordException;
-import com.intuit.uber.onboarding.exception.InvalidUserException;
+import com.intuit.uber.onboarding.exception.UserException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,22 +33,21 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public User userSignupService(User user) throws InvalidUserException, DuplicateRecordException {
+    public User userSignupService(User user) throws UserException {
 
         if (Objects.nonNull(userRepository.findByContact(user.getContact()))) {
-            throw new DuplicateRecordException("User with Contact number - " + user.getContact() + " Already Exists");
+            throw new UserException("User with Contact number - " + user.getContact() + " Already Exists");
         }
         if (user.getUserType().equals(UserType.DRIVER)
                 && !user.getIdentityType().equals(IdentityType.DRIVING_LICENCE)) {
-            throw new InvalidUserException("Driver needs a driving licence as id proof");
+            throw new UserException("Driver needs a driving licence as id proof");
         }
 
         if (user.getAge() < 18) {
-            throw new InvalidUserException("User is below the legal age to drive");
+            throw new UserException("User is below the legal age to drive");
         }
         // saving the encrypted version
         user.setPassword(DigestUtils.md5Hex(user.getPassword()));
-        System.out.println("Ankit2 - " + user);
         return userRepository.save(user);
     }
 

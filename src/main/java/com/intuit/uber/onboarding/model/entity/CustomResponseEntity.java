@@ -9,6 +9,8 @@
 
 package com.intuit.uber.onboarding.model.entity;
 
+import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
 import lombok.AllArgsConstructor;
@@ -18,11 +20,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
+@Builder
 public class CustomResponseEntity {
-
     private HttpStatus httpStatus;
-
-    private Object     data;
-
-    private String     message;
+    private Object data;
+    private String message;
+    private long timestamp;
 }

@@ -9,9 +9,10 @@
 
 package com.intuit.uber.onboarding.service;
 
+import com.intuit.uber.onboarding.exception.AccountException;
+import com.intuit.uber.onboarding.exception.UserException;
 import org.springframework.stereotype.Component;
 
-import com.intuit.uber.onboarding.exception.CustomException;
 import com.intuit.uber.onboarding.model.entity.AccountDetails;
 import com.intuit.uber.onboarding.model.entity.User;
 
@@ -20,5 +21,5 @@ public interface AccountDetailsService {
 
     void initAccountDetails(User user);
 
-    AccountDetails updateAccountDetails(Long id, AccountDetails details) throws CustomException;
+    AccountDetails updateAccountDetails(Long id, AccountDetails details) throws AccountException, UserException;
 }

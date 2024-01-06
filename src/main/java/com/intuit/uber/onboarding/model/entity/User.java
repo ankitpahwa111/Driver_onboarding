@@ -66,4 +66,3 @@ public class User {
     @Column(name = "updated_at")
     private Date updatedAt;
 }
-// insert into user(id, address, age, contact, identity_number, identity_type, name, password, user_type) values (1,'ass',12,'9899429440','123',1,'Sample','ass@',2)

@@ -12,10 +12,12 @@ package com.intuit.uber.onboarding.controller;
 import java.util.Optional;
 
 import com.google.gson.Gson;
-import com.intuit.uber.onboarding.service.UserSignupProducer;
+import com.intuit.uber.onboarding.exception.UserException;
+import com.intuit.uber.onboarding.factory.CustomResponseEntityFactory;
+import com.intuit.uber.onboarding.service.producer.UserSignupProducer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.intuit.uber.onboarding.exception.CustomException;
 import com.intuit.uber.onboarding.model.entity.CustomResponseEntity;
 import com.intuit.uber.onboarding.model.entity.User;
 import com.intuit.uber.onboarding.service.AccountDetailsService;
@@ -32,6 +33,7 @@ import com.intuit.uber.onboarding.service.UserService;
 
 @RestController
 @RequestMapping("/api")
+@Slf4j
 public class UserController {
 
     @Autowired
@@ -46,24 +48,23 @@ public class UserController {
     @Autowired
     private UserSignupProducer userSignupProducer;
 
+    @Autowired
+    private CustomResponseEntityFactory customResponseEntityFactory;
+
     Gson gson = new Gson();
 
     @PostMapping("/user")
     public CustomResponseEntity signupUser(@RequestBody User user) {
-        System.out.println("Ankit - " + user);
         try {
             User dbUser = userService.userSignupService(user);
             driverOnboardingService.initOnboarding(dbUser);
             userSignupProducer.sendMessageToTopic(gson.toJson(dbUser));
             accountDetailsService.initAccountDetails(dbUser);
-            return new CustomResponseEntity(HttpStatus.CREATED, dbUser,
-                    HttpStatus.CREATED.getReasonPhrase());
-        } catch (CustomException customException) {
-            return new CustomResponseEntity(HttpStatus.BAD_REQUEST, null,
-                    customException.getMessage());
+            return customResponseEntityFactory.getSuccessResponse(dbUser);
+        } catch (UserException customException) {
+            return customResponseEntityFactory.getBadRequestResponse(customException.getMessage());
         } catch (Exception exception) {
-            return new CustomResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR,
-                    exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+            return customResponseEntityFactory.getISEResponse();
         }
     }
 
@@ -72,9 +73,8 @@ public class UserController {
     public CustomResponseEntity getCustomer(@PathVariable Long id) {
         Optional<User> user = userService.findUser(id);
         if (user.isPresent()) {
-            return new CustomResponseEntity(HttpStatus.OK, user, HttpStatus.OK.getReasonPhrase());
+            return customResponseEntityFactory.getSuccessResponse(user);
         }
-        return new CustomResponseEntity(HttpStatus.NOT_FOUND, null,
-                HttpStatus.NOT_FOUND.getReasonPhrase());
+        return customResponseEntityFactory.getNotFoundResponse();
     }
 }

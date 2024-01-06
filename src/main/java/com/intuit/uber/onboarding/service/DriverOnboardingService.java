@@ -9,9 +9,10 @@
 
 package com.intuit.uber.onboarding.service;
 
+import com.intuit.uber.onboarding.exception.OnboardingException;
+import com.intuit.uber.onboarding.exception.UserException;
 import org.springframework.stereotype.Component;
 
-import com.intuit.uber.onboarding.exception.CustomException;
 import com.intuit.uber.onboarding.model.entity.DriverOnboardingDetails;
 import com.intuit.uber.onboarding.model.entity.User;
 
@@ -27,5 +28,5 @@ public interface DriverOnboardingService {
     void initDocumentCollection(User user);
 
     DriverOnboardingDetails updateOnboarding(Long id,
-                                             DriverOnboardingDetails details) throws CustomException;
+                                             DriverOnboardingDetails details) throws OnboardingException, UserException;
 }

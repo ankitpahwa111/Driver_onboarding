@@ -10,24 +10,26 @@
 package com.intuit.uber.onboarding.controller;
 
 import com.google.gson.Gson;
+import com.intuit.uber.onboarding.exception.AccountException;
+import com.intuit.uber.onboarding.exception.UserException;
+import com.intuit.uber.onboarding.factory.CustomResponseEntityFactory;
 import com.intuit.uber.onboarding.model.entity.DriverStatus;
-import com.intuit.uber.onboarding.service.DriverStatusProducer;
-import com.intuit.uber.onboarding.service.UserSignupProducer;
+import com.intuit.uber.onboarding.service.producer.DriverStatusProducer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.intuit.uber.onboarding.exception.CustomException;
 import com.intuit.uber.onboarding.model.entity.AccountDetails;
 import com.intuit.uber.onboarding.model.entity.CustomResponseEntity;
 import com.intuit.uber.onboarding.service.AccountDetailsService;
 
 @RestController
 @RequestMapping("/api/account")
+@Slf4j
 public class AccountDetailsController {
 
     @Autowired
@@ -36,23 +38,24 @@ public class AccountDetailsController {
     @Autowired
     private DriverStatusProducer driverStatusProducer;
 
+    @Autowired
+    private CustomResponseEntityFactory customResponseEntityFactory;
+
     @PutMapping("/update/{id}")
-    public CustomResponseEntity updateOnboardingDetails(@PathVariable Long id,
+    public CustomResponseEntity updateAccountStatus(@PathVariable Long id,
                                                         @RequestBody AccountDetails details) {
+        log.info("Request for Update Account Status details for userId - {}", id);
         try {
             AccountDetails dbDetails = accountDetailsService.updateAccountDetails(id, details);
             DriverStatus driverStatus = new DriverStatus();
             driverStatus.setUserId(dbDetails.getUser().getId());
             driverStatus.setIsOnline(dbDetails.getIsOnline());
             driverStatusProducer.sendMessageToTopic(new Gson().toJson(driverStatus));
-            return new CustomResponseEntity(HttpStatus.OK, dbDetails,
-                HttpStatus.OK.getReasonPhrase());
-        } catch (CustomException customException) {
-            return new CustomResponseEntity(HttpStatus.BAD_REQUEST, null,
-                customException.getMessage());
+            return customResponseEntityFactory.getSuccessResponse(dbDetails);
+        } catch (UserException | AccountException customException) {
+            return customResponseEntityFactory.getBadRequestResponse(customException.getMessage());
         } catch (Exception exception) {
-            return new CustomResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR,
-                exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+            return customResponseEntityFactory.getISEResponse();
         }
     }
 }

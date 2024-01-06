@@ -11,17 +11,15 @@ package com.intuit.uber.onboarding.service;
 
 import java.util.Optional;
 
-import com.intuit.uber.onboarding.exception.DuplicateRecordException;
-import com.intuit.uber.onboarding.exception.InvalidUserException;
+import com.intuit.uber.onboarding.exception.UserException;
 import org.springframework.stereotype.Component;
 
-import com.intuit.uber.onboarding.exception.CustomException;
 import com.intuit.uber.onboarding.model.entity.User;
 
 @Component
 public interface UserService {
 
-    User userSignupService(User user) throws CustomException, InvalidUserException, DuplicateRecordException;
+    User userSignupService(User user) throws UserException;
 
     Optional<User> findUser(Long id);
 }

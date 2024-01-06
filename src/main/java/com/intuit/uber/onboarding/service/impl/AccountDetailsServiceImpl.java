@@ -13,13 +13,15 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import com.intuit.uber.onboarding.exception.AccountException;
+import com.intuit.uber.onboarding.exception.UserException;
 import com.intuit.uber.onboarding.model.entity.DriverOnboardingDetails;
 import com.intuit.uber.onboarding.model.enums.ProcessState;
 import com.intuit.uber.onboarding.repository.DriverOnboardingRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.intuit.uber.onboarding.exception.CustomException;
 import com.intuit.uber.onboarding.model.entity.AccountDetails;
 import com.intuit.uber.onboarding.model.entity.User;
 import com.intuit.uber.onboarding.repository.AccountDetailsRepository;
@@ -28,6 +30,7 @@ import com.intuit.uber.onboarding.service.UserService;
 
 @Service
 @Transactional
+@Slf4j
 public class AccountDetailsServiceImpl implements AccountDetailsService {
 
     @Autowired
@@ -49,21 +52,23 @@ public class AccountDetailsServiceImpl implements AccountDetailsService {
 
     @Override
     public AccountDetails updateAccountDetails(Long id,
-                                               AccountDetails details) throws CustomException {
+                                               AccountDetails details) throws UserException, AccountException {
         Optional<User> userOptional = userService.findUser(id);
-        System.out.println("Ankit3 -- " + userOptional);
         if (userOptional.isPresent()) {
             DriverOnboardingDetails driverOnboardingDetails =
                     driverOnboardingRepository.findByUser(userOptional.get());
-            System.out.println(driverOnboardingDetails);
+            log.info("AccountDetailsServiceImpl.updateAccountDetails - userId - {} , driverOnboardingDetails - {}",
+                    userOptional.get().getId(), driverOnboardingDetails);
             if (!isUserOnboarded(driverOnboardingDetails)) {
-                throw new CustomException("User is not onboarded yet ");
+                throw new AccountException("User is not onboarded yet ");
             }
             AccountDetails dbDetails = accountDetailsRepository.findByUser(userOptional.get());
             dbDetails.setIsOnline(details.getIsOnline());
+            log.info("AccountDetailsServiceImpl.updateAccountDetails - userId - {} , dbDetails - {}",
+                    userOptional.get().getId(), dbDetails);
             return accountDetailsRepository.save(dbDetails);
         }
-        throw new CustomException("User details not found");
+        throw new UserException("User details not found");
     }
 
     private Boolean isUserOnboarded(DriverOnboardingDetails driverOnboardingDetails) {
