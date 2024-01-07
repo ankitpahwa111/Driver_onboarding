@@ -18,20 +18,20 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.intuit.uber.onboarding.model.enums.IdentityType;
 import com.intuit.uber.onboarding.model.enums.UserType;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @Table(name = "user")
 @Getter
 @Setter
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id

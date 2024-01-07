@@ -22,6 +22,5 @@ public enum IdentityType {
     DRIVING_LICENCE(2, "driving_licence");
 
     private final int id;
-
     private final String value;
 }

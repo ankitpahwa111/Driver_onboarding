@@ -60,7 +60,7 @@ public class AccountDetailsServiceImpl implements AccountDetailsService {
             log.info("AccountDetailsServiceImpl.updateAccountDetails - userId - {} , driverOnboardingDetails - {}",
                     userOptional.get().getId(), driverOnboardingDetails);
             if (!isUserOnboarded(driverOnboardingDetails)) {
-                throw new AccountException("User is not onboarded yet ");
+                throw new AccountException("User is not onboarded yet");
             }
             AccountDetails dbDetails = accountDetailsRepository.findByUser(userOptional.get());
             dbDetails.setIsOnline(details.getIsOnline());

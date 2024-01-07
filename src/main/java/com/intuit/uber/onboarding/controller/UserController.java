@@ -60,7 +60,7 @@ public class UserController {
             driverOnboardingService.initOnboarding(dbUser);
             userSignupProducer.sendMessageToTopic(gson.toJson(dbUser));
             accountDetailsService.initAccountDetails(dbUser);
-            return customResponseEntityFactory.getSuccessResponse(dbUser);
+            return customResponseEntityFactory.getCreatedResponse(dbUser);
         } catch (UserException customException) {
             return customResponseEntityFactory.getBadRequestResponse(customException.getMessage());
         } catch (Exception exception) {

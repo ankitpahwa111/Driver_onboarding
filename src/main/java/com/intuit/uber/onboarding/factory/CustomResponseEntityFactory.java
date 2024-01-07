@@ -40,4 +40,13 @@ public class CustomResponseEntityFactory {
                 .timestamp(System.currentTimeMillis())
                 .build();
     }
+
+    public CustomResponseEntity getCreatedResponse(Object data) {
+        return CustomResponseEntity.builder()
+                .httpStatus(HttpStatus.CREATED)
+                .data(data)
+                .message(HttpStatus.CREATED.getReasonPhrase())
+                .timestamp(System.currentTimeMillis())
+                .build();
+    }
 }

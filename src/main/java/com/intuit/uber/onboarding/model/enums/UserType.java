@@ -18,13 +18,11 @@ import lombok.ToString;
 @AllArgsConstructor
 public enum UserType {
 
-                      RIDER(1, "rider"),
+    RIDER(1, "rider"),
+    DRIVER(2, "driver"),
 
-                      DRIVER(2, "driver"),
+    ADMIN(3, "admin");
 
-                      ADMIN(3, "admin");
-
-    private final int    id;
-
+    private final int id;
     private final String value;
 }
