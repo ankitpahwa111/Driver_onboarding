@@ -11,6 +11,8 @@ should:
 of tracking device, etc., 
 - Allow a driver to mark when they are ready to take a ride
 
+![UI](src/assets/UI.png)
+
 ### Table of contents:
 
 - [Detailed Approach](#detailed-approach)
